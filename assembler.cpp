@@ -5,7 +5,7 @@
 #include "Parser.h"
 int main()
 {
-    Parser parser("..\\add\\Add.asm");
+    Parser parser("..\\max\\MaxL.asm");
     while (parser.hasNextLine())
     {
         std::string line = parser.getNextLine();

@@ -86,7 +86,7 @@ std::string Parser::extractComp(std::string line, instructions type)
 	}
 	else if (equalPos == std::string::npos && semiColonPos != std::string::npos)
 	{
-		return line.substr(semiColonPos+1, std::string::npos);
+		return line.substr(0, semiColonPos);
 	}
 	else 
 	{
