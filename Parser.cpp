@@ -1,5 +1,15 @@
 #include "Parser.h"
 
+std::string Parser::removeComments(std::string line)
+{
+	size_t commentPos = line.find("//");
+	if (commentPos != std::string::npos)
+	{
+		line = line.substr(0, commentPos);
+	}
+	return trim(line);
+}
+
 Parser::Parser(): inputFile(), inputFilename()
 {
 }
@@ -27,6 +37,7 @@ bool Parser::hasNextLine() {
 
 instructions Parser::getInstructionType(std::string line) {
 	instructions instruction;
+	line = trim(line);
 	if (line.size() == 0) {
 		instruction = instructions::Comments;
 	}
@@ -47,6 +58,7 @@ instructions Parser::getInstructionType(std::string line) {
 std::string Parser::extractSymbol(std::string line, instructions type)
 {
 	std::string symbol;
+	line = trim(line);
 	assert(type == instructions::A || type == instructions::L);
 	switch (type)
 	{
@@ -63,10 +75,11 @@ std::string Parser::extractSymbol(std::string line, instructions type)
 std::string Parser::extractDest(std::string line, instructions type)
 {
 	assert(type == instructions::C);
+	line = trim(line);
 	size_t equalPos = line.find("=");
 	if (equalPos != std::string::npos)
 	{
-		return line.substr(0, equalPos);
+		return removeComments(line.substr(0, equalPos));
 	}
 	return "null";
 }
@@ -76,6 +89,7 @@ std::string Parser::extractComp(std::string line, instructions type)
 	assert(type == instructions::C);
 	size_t equalPos = line.find("=");
 	size_t semiColonPos = line.find(";");
+	line = removeComments(line);
 	if (equalPos == std::string::npos && semiColonPos == std::string::npos)
 	{
 		return line;
@@ -101,6 +115,7 @@ std::string Parser::extractJump(std::string line, instructions type)
 {
 	assert(type == instructions::C);
 	size_t semiColonPos = line.find(";");
+	line = removeComments(line);
 	if (semiColonPos != std::string::npos)
 	{
 		return line.substr(semiColonPos + 1, std::string::npos);

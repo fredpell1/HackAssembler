@@ -5,29 +5,29 @@
 #include "Parser.h"
 int main()
 {
-    Parser parser("..\\max\\MaxL.asm");
+    Parser parser("..\\max\\Max.asm");
     while (parser.hasNextLine())
     {
         std::string line = parser.getNextLine();
         instructions type = parser.getInstructionType(line);
-        std::cout << line << "\t";
+        std::cout << trim(line)<< "||||";
         switch (type)
         {
         case instructions::A:
-            std::cout << "\t" << parser.extractSymbol(line, type) << "\t";
-            std::cout << "A\n";
+            std::cout << " symbol: " << parser.extractSymbol(line, type);
+            std::cout << " A\n";
             break;
 
         case instructions::C: 
-            std::cout << "\t dest: " << parser.extractDest(line, type) << "\t";
-            std::cout << "\t comp:" << parser.extractComp(line, type) << "\t";
-            std::cout << "\t jump:" << parser.extractJump(line, type) << "\t";
-            std::cout << "C\n";
+            std::cout << " dest: " << parser.extractDest(line, type);
+            std::cout << " comp:" << parser.extractComp(line, type);
+            std::cout << " jump:" << parser.extractJump(line,  type);
+            std::cout << " C\n";
             break;
 
         case instructions::L:
-            std::cout << "\t" << parser.extractSymbol(line, type) << "\t";
-            std::cout << "L\n";
+            std::cout << "symbol " << parser.extractSymbol(line, type);
+            std::cout << " L\n";
             break;
 
         case instructions::Comments: std::cout << "Comments\n"; break;
