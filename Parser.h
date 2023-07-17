@@ -39,6 +39,10 @@ private:
 public:
 	Parser();
 	Parser(std::string inputFilename);
+	Parser(const Parser& parser);
+
+	Parser& operator=(const Parser& parser);
+
 	~Parser();
 
 	std::string getNextLine();

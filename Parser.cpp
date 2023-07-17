@@ -19,6 +19,21 @@ Parser::Parser(std::string inputFilename): inputFile(), inputFilename(inputFilen
 	inputFile.open(inputFilename);
 }
 
+Parser::Parser(const Parser& parser)
+	: inputFile(), inputFilename(parser.inputFilename)
+{
+	inputFile.open(inputFilename);
+}
+
+Parser& Parser::operator=(const Parser& parser)
+{
+	this->inputFilename = parser.inputFilename;
+	this->inputFile = std::ifstream();
+	this->inputFile.open(inputFilename);
+	return *this;
+}
+
+
 Parser::~Parser() {
 	if (inputFile.is_open()) {
 		inputFile.close();

@@ -3,38 +3,29 @@
 
 #include <iostream>
 #include "Parser.h"
+#include "CodeGenerator.h"
 int main()
 {
-    Parser parser("..\\max\\Max.asm");
-    while (parser.hasNextLine())
-    {
-        std::string line = parser.getNextLine();
-        instructions type = parser.getInstructionType(line);
-        std::cout << trim(line)<< "||||";
-        switch (type)
-        {
-        case instructions::A:
-            std::cout << " symbol: " << parser.extractSymbol(line, type);
-            std::cout << " A\n";
-            break;
-
-        case instructions::C: 
-            std::cout << " dest: " << parser.extractDest(line, type);
-            std::cout << " comp:" << parser.extractComp(line, type);
-            std::cout << " jump:" << parser.extractJump(line,  type);
-            std::cout << " C\n";
-            break;
-
-        case instructions::L:
-            std::cout << "symbol " << parser.extractSymbol(line, type);
-            std::cout << " L\n";
-            break;
-
-        case instructions::Comments: std::cout << "Comments\n"; break;
-
+    Parser parser("..\\pong\\pongL.asm");
+    CodeGenerator cg(parser);
+    std::ofstream outFile = std::ofstream();
+    outFile.open("pongL.hack");
+    cg.build(outFile);
+    Parser binaryParser("pongl.hack");
+    Parser testParser("..\\pong\\PongL.hack");
+    bool correct = true;
+    while (testParser.hasNextLine() && binaryParser.hasNextLine()) {
+        std::string correctLine = testParser.getNextLine();
+        std::string generatedLine = binaryParser.getNextLine();
+        if (correctLine != generatedLine) {
+            std::cout << correctLine << ", " << generatedLine << std::endl;
+            correct = false;
         }
     }
-    std::cout << "Hello World!\n";
+    if (correct) {
+        std::cout << "comparison successful" << std::endl;
+    }
+
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
