@@ -1,6 +1,6 @@
 #include "CodeGenerator.h"
 
-CodeGenerator::CodeGenerator(): parser(), destTable(), jumpTable(), compTable()
+CodeGenerator::CodeGenerator(): parser(), destTable(), jumpTable(), compTable(), table()
 {
 	destTable["null"] = "000";
 	destTable["M"] = "001";
@@ -48,6 +48,17 @@ std::string CodeGenerator::processCInstruction(std::string instruction, instruct
 	return "111" + comp + dest + jump;
 }
 
+std::string CodeGenerator::processAInstruction(std::string instruction, instructions type)
+{
+	auto isNumeric = [&instruction](std::string instruction) {return !instruction.empty() && instruction.find_first_not_of("0123456789") == std::string::npos; };
+	std::string symbol = parser.extractSymbol(instruction, type);
+	std::string binInstruction = convertToBinary(symbol);
+	if (!isNumeric(symbol)) {
+		binInstruction = table.getAddress(symbol);
+	}
+	return binInstruction;
+}
+
 std::string CodeGenerator::translateDest(std::string instruction)
 {
 	return destTable[instruction];
@@ -79,7 +90,7 @@ std::string CodeGenerator::generate(std::string instruction, instructions type)
 	switch (type)
 	{
 	case instructions::A:
-		binaryInstruction = convertToBinary(parser.extractSymbol(instruction, type));
+		binaryInstruction = processAInstruction(instruction, type);
 		break;
 	case instructions::C:
 		binaryInstruction = processCInstruction(instruction, type);
@@ -100,11 +111,12 @@ std::string CodeGenerator::generate(std::string instruction, instructions type)
 
 std::string CodeGenerator::build()
 {
+	parser.reset();
 	while (parser.hasNextLine())
 	{
 		std::string line = parser.getNextLine();
 		instructions type = parser.getInstructionType(line);
-		if (type != instructions::Comments) {
+		if (type != instructions::Comments && type!=instructions::L) {
 			std::cout << generate(line, type) << "\n";
 
 		}
@@ -115,15 +127,56 @@ std::string CodeGenerator::build()
 void CodeGenerator::build(std::ofstream & outputFile)
 {
 	if (!outputFile.is_open()) return;
+	parser.reset();
 	while (parser.hasNextLine())
 	{
 		std::string line = parser.getNextLine();
 		instructions type = parser.getInstructionType(line);
-		if (type != instructions::Comments) {
+		if (type != instructions::Comments && type != instructions::L) {
 			outputFile << generate(line, type) << "\n";
 
 		}
 	}
 	outputFile.close();
+}
+
+void CodeGenerator::printSymbolTable()
+{
+	std::cout << table << std::endl;
+}
+
+void CodeGenerator::fillSymbolTable()
+{
+	parser.reset();
+	int i = 0;
+	while (parser.hasNextLine()) {
+		std::string line = parser.getNextLine();
+		instructions type = parser.getInstructionType(line);
+		
+		if (type == instructions::L)
+		{
+			std::string symbol = parser.extractSymbol(line, type);
+			table.addToSymbolTable(symbol,i);
+		}
+		if (type != instructions::Comments && type != instructions::L)
+		{
+			i++;
+		}
+	}
+	parser.reset();
+	while (parser.hasNextLine())
+	{
+		std::string line = parser.getNextLine();
+		instructions type = parser.getInstructionType(line);
+		if (type == instructions::A)
+		{
+			std::string symbol = parser.extractSymbol(line, type);
+			auto isNumeric = [&symbol](std::string symbol) {return !symbol.empty() && symbol.find_first_not_of("0123456789") == std::string::npos; };
+			if (!isNumeric(symbol))
+			{
+				table.addToSymbolTable(symbol);
+			}
+		}
+	}
 }
 

@@ -4,10 +4,12 @@
 #include <string>
 #include <cstdlib>
 #include <bitset>
+#include "SymbolTable.h"
 class CodeGenerator
 {
 private:
 	Parser parser;
+	SymbolTable table;
 	std::map<std::string, std::string> destTable;
 	std::map<std::string, std::string> jumpTable;
 	std::map<std::string, std::string> compTable;
@@ -24,6 +26,7 @@ public:
 	std::string generate(std::string instruction, instructions type);
 
 	std::string processCInstruction(std::string instruction, instructions type);
+	std::string processAInstruction(std::string instruction, instructions type);
 	std::string translateDest(std::string instruction);
 	std::string translateComp(std::string instruction);
 	std::string translateJump(std::string instruction);
@@ -31,5 +34,8 @@ public:
 	std::string convertToBinary(std::string instruction);
 	std::string build();
 	void build(std::ofstream & outputFile);
+	void printSymbolTable();
+	void fillSymbolTable();
+
 };
 

@@ -130,10 +130,12 @@
     <ClCompile Include="assembler.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="CodeGenerator.cpp" />
+    <ClCompile Include="SymbolTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parser.h" />
     <ClInclude Include="CodeGenerator.h" />
+    <ClInclude Include="SymbolTable.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

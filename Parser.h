@@ -59,5 +59,6 @@ public:
 
 	std::string extractJump(std::string line, instructions type);
 
+	void reset();
 };
 

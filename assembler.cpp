@@ -4,11 +4,11 @@
 #include <iostream>
 #include "Parser.h"
 #include "CodeGenerator.h"
-int main()
-{
+
+void testSymbolLessAssembler() {
     Parser parser("..\\pong\\pongL.asm");
     CodeGenerator cg(parser);
-    std::ofstream outFile = std::ofstream();
+    std::ofstream outFile;
     outFile.open("pongL.hack");
     cg.build(outFile);
     Parser binaryParser("pongl.hack");
@@ -25,7 +25,15 @@ int main()
     if (correct) {
         std::cout << "comparison successful" << std::endl;
     }
-
+}
+int main()
+{
+    //testSymbolLessAssembler();
+    Parser parser("..\\pong\\pong.asm");
+    CodeGenerator cg(parser);
+    cg.fillSymbolTable();
+    std::ofstream outFile("pong.hack");
+    cg.build(outFile);
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

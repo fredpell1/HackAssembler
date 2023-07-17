@@ -102,9 +102,10 @@ std::string Parser::extractDest(std::string line, instructions type)
 std::string Parser::extractComp(std::string line, instructions type)
 {
 	assert(type == instructions::C);
+	line = removeComments(line);
 	size_t equalPos = line.find("=");
 	size_t semiColonPos = line.find(";");
-	line = removeComments(line);
+	
 	if (equalPos == std::string::npos && semiColonPos == std::string::npos)
 	{
 		return line;
@@ -129,13 +130,19 @@ std::string Parser::extractComp(std::string line, instructions type)
 std::string Parser::extractJump(std::string line, instructions type)
 {
 	assert(type == instructions::C);
-	size_t semiColonPos = line.find(";");
 	line = removeComments(line);
+	size_t semiColonPos = line.find(";");
 	if (semiColonPos != std::string::npos)
 	{
 		return line.substr(semiColonPos + 1, std::string::npos);
 	}
 	return "null";
+}
+
+void Parser::reset()
+{
+	inputFile.clear();
+	inputFile.seekg(0);
 }
 
 
